@@ -13,9 +13,6 @@
     "dateformat": "^4.5.1",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
-    "graphql-request": "^3.4.0",
-    "jikan-node": "^1.2.1",
-    "jquery": "^3.6.0",
     "jsdom": "^16.5.2"
   }
 }
