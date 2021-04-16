@@ -1,6 +1,8 @@
 const fetch = require('node-fetch');
 const anilist = require('anilist-node');
 const { MessageEmbed } = require("discord.js");
+const query = require("./queries/getSeiyuuQuery.js");
+
 
 module.exports = {
   name : 'seiyuu', 
@@ -9,51 +11,6 @@ module.exports = {
     let seiyuu = args.join();
     seiyuu = seiyuu.replace(/,/g, " ");
     var start = new Date();
-    var query = `
-    query ($search: String) {
-      Staff(search: $search) {
-        id
-        siteUrl
-        image {
-          large
-        }
-        name {
-          first
-          last
-          full
-          native
-        }
-        language
-        description
-        characters(sort: FAVOURITES_DESC, perPage:10){
-          edges{
-            node{
-              id
-              name {
-                first
-                last
-                full
-                native
-              }
-    
-            }
-            media{
-              id
-              title {
-                romaji
-                english
-              }
-              characters {
-                edges {
-                  id
-                }
-              }
-            }
-    
-            }
-        }
-      }
-    }`
 
     var variables = {
       search : seiyuu
