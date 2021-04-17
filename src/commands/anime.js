@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { MessageEmbed } = require("discord.js");
 const replace = require("./functions/replaceMsg");
 const query = require("./queries/getAnimeQuery");
-
+const statusAnime = require("./functions/status");
 
 
 module.exports = {
@@ -51,18 +51,7 @@ module.exports = {
       function handleData(data){
           const animeInfo = data.data.Media;
 
-          let status = "";
-          switch(animeInfo.status){
-            case "FINISHED" :
-              status = "Finished";
-              break;
-            case "RELEASING" :
-              status = "Airing";
-              break;
-            case "NOT_YET_RELEASED" :
-              status = "Not Yet Released";
-              break;      
-          }
+          const status = statusAnime.statusAnime(animeInfo.status);
 
           let studios = "";
           if(animeInfo.studios.nodes.length > 0){

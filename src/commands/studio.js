@@ -1,6 +1,7 @@
 const replace = require('./functions/replaceMsg');
 const fetch = require('node-fetch');
 const { MessageEmbed } = require("discord.js");
+const query = require("./queries/getStudioQuery.js");
 
 
 module.exports = {
@@ -10,33 +11,6 @@ module.exports = {
         msg.reply("This command is still in beta");
         let start = new Date();
         let studio = replace.replaceVirgule(args);
-
-        var query = `
-        query ($search: String){
-            Studio(search:$search) {
-                id
-                name
-                siteUrl
-                isAnimationStudio
-                media(sort:POPULARITY_DESC,page: 1, perPage:25){
-                    nodes{
-                    title {
-                        romaji
-                        english
-                        native
-                    }
-                    countryOfOrigin
-                    type
-                    status
-                    season
-                    seasonYear
-                    episodes
-                    source
-                    averageScore
-                    }
-                }
-            }
-        }`;
 
         var variables = {
             search : studio

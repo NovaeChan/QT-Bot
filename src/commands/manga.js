@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { MessageEmbed } = require("discord.js");
 const replace = require("./functions/replaceMsg");
 const query = require("./queries/getMangaQuery.js");
-
+const statusAnime = require("./functions/status");
 
 module.exports = {
     name : 'manga', 
@@ -46,18 +46,7 @@ module.exports = {
         function handleData(data){
             let manga = data.data.Media;
 
-            let status = "";
-            switch(manga.status){
-            case "FINISHED" :
-                status = "Finished";
-                break;
-            case "RELEASING" :
-                status = "Airing";
-                break;
-            case "NOT_YET_RELEASED" :
-                status = "Not Yet Released";
-                break;      
-            }
+            const status = statusAnime.statusAnime(manga.status);
 
             let genres;
             if(manga.genres.length > 0){

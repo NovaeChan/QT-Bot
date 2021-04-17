@@ -20,6 +20,9 @@ client.once('ready', () => console.log('Connecté...'));
 //const commandHandler = require("./commands");
 
 client.on("message", message => {
+    if(message.content === "69"){
+        message.channel.send('https://tenor.com/view/noice-nice-click-gif-8843762');
+    }
     //Do nothing if the message doesn't start with the PREFIX or if the message is send by a bot
     if(!message.content.startsWith(PREFIX) || message.author.bot){return;}
 

@@ -30,7 +30,7 @@ module.exports = {
             .setTitle(`${auteur.username}'s profile`)
             .addField('ID', `${auteur.id}     `, true)
             .addField('Nickname', `${nickname !== null ? `${nickname}` : 'N/A'}`, true)
-            .addField("Status", `${status(userMember.presence.status)}`, true)
+            .addField("Status", `${status.statusOnline(userMember.presence.status)}`, true)
             .addField("Now playing", `${activite.length > 0 ? activite.find(activity => activity.type === "PLAYING").name : 'N/A'}`, true)
             .addField("Mention", `${auteur.toString()}`, true)
             .addField("Bot or Not :robot: ?", auteur.bot ? "You're a bot" : "You're not a bot", true)
