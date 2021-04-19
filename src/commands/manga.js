@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
 const { MessageEmbed } = require("discord.js");
 const replace = require("./functions/replaceMsg");
 const query = require("./queries/getMangaQuery.js");
 const statusAnime = require("./functions/status");
+const api = require("../api.js");
 
 module.exports = {
     name : 'manga', 
@@ -11,40 +11,16 @@ module.exports = {
         let start = new Date();
         let manga = replace.replaceVirgule(args);
 
-        var variables = {
-            search : manga
+        const response = await api(query, { search : manga } );
+        if(response.error){
+          console.error(response);
+          msg.channel.send("Something went wrong");
+          return response;
         }
-
-        var url = 'https://graphql.anilist.co',
-        options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })
-        }
-
-        fetch(url, options).then(handleResponse)
-                            .then(handleData)
-                            .catch(handleError);
-
-        function handleResponse(response) {
-            return response.json().then(function (json) {
-            return response.ok ? json : Promise.reject(json);
-        });
-        }
-
-        function handleError(error) {
-            msg.channel.send("No results found or something went wrong");
-            console.error(error);
-        }
+        handleData(response);
 
         function handleData(data){
-            let manga = data.data.Media;
+            let manga = data.Media;
 
             const status = statusAnime.statusAnime(manga.status);
 

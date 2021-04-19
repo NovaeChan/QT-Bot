@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
 const { MessageEmbed } = require("discord.js");
 const replace = require("./functions/replaceMsg");
 const query = require("./queries/getAnimeQuery");
 const statusAnime = require("./functions/status");
+const api = require("../api.js");
 
 
 module.exports = {
@@ -16,40 +16,17 @@ module.exports = {
         msg.channel.send("My favourite anime :heart:");
       }
 
-      const variables = {
-        search : anime
+      //Request to the API 
+      const response = await api(query, { search : anime } );
+      if(response.error){
+        console.error(response);
+        msg.channel.send("Something went wrong");
+        return response;
       }
-
-      const url = 'https://graphql.anilist.co',
-      options = {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-          },
-          body: JSON.stringify({
-              query: query,
-              variables: variables
-          })
-      }
-
-      fetch(url, options).then(handleResponse)
-                          .then(handleData)
-                          .catch(handleError);
-
-      function handleResponse(response) {
-          return response.json().then(function (json) {
-          return response.ok ? json : Promise.reject(json);
-      });
-      }
-
-      function handleError(error) {
-          msg.channel.send("No results found or something went wrong.");
-          console.error(error);
-      }
+      handleData(response);
 
       function handleData(data){
-          const animeInfo = data.data.Media;
+          const animeInfo = data.Media;
 
           const status = statusAnime.statusAnime(animeInfo.status);
 
@@ -141,7 +118,5 @@ module.exports = {
 
           msg.channel.send(embed);
       }
-
-      //let response = await anime.search(anime);
   }
 }

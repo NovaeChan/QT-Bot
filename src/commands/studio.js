@@ -1,8 +1,7 @@
 const replace = require('./functions/replaceMsg');
-const fetch = require('node-fetch');
 const { MessageEmbed } = require("discord.js");
 const query = require("./queries/getStudioQuery.js");
-
+const api = require("../api.js");
 
 module.exports = {
     name : 'studio', 
@@ -12,39 +11,17 @@ module.exports = {
         let start = new Date();
         let studio = replace.replaceVirgule(args);
 
-        var variables = {
-            search : studio
+        const response = await api(query, { search : studio } );
+        if(response.error){
+          console.error(response);
+          msg.channel.send("Something went wrong");
+          return response;
         }
-
-        var url = 'https://graphql.anilist.co',
-        options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })
-        }
-
-        fetch(url, options).then(handleResponse)
-            .then(handleData)
-            .catch(handleError);
-
-        function handleResponse(response) {
-            return response.json().then(function (json) {
-            return response.ok ? json : Promise.reject(json);
-        });
-        }
-
-        function handleError(error) {
-            console.error(error);
-        }
+        //console.log(response);
+        handleData(response);
 
         function handleData(data){
-            var studioInfo = data.data.Studio;
+            var studioInfo = data.Studio;
             const embed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(studioInfo.name)
@@ -62,6 +39,7 @@ module.exports = {
             msg.channel.send(embed);
         }
 
+        //Temp function
         function getAnime(nodes, index){
             let animes = "";
             let nodesSize = nodes.length;

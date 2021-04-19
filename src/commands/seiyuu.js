@@ -1,7 +1,6 @@
-const fetch = require('node-fetch');
-const anilist = require('anilist-node');
 const { MessageEmbed } = require("discord.js");
 const query = require("./queries/getSeiyuuQuery.js");
+const api = require("../api.js");
 
 
 module.exports = {
@@ -12,59 +11,36 @@ module.exports = {
     seiyuu = seiyuu.replace(/,/g, " ");
     var start = new Date();
 
-    var variables = {
-      search : seiyuu
-    };
-
-    var url = 'https://graphql.anilist.co',
-      options = {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-          },
-          body: JSON.stringify({
-              query: query,
-              variables: variables
-          })
-      }
-
-      // Make the HTTP Api request
-    fetch(url, options).then(handleResponse)
-    .then(handleData)
-    .catch(handleError);
-
-    function handleResponse(response) {
-    return response.json().then(function (json) {
-    return response.ok ? json : Promise.reject(json);
-    });
+    const response = await api(query, { search : seiyuu } );
+    if(response.error){
+      console.error(response);
+      msg.channel.send("Something went wrong");
+      return response;
     }
+    handleData(response);
 
     function handleData(data) {
-      var characters = getCharacters(data);
+      const Staff = data.Staff;
+      const characters = getCharacters(Staff);
       const embed = new MessageEmbed()
         .setColor('#0099ff')
-        .setTitle(data.data.Staff.name.full)
-        .setURL(data.data.Staff.siteUrl)
-        .setAuthor(data.data.Staff.name.full)
-        .setThumbnail(data.data.Staff.image.large)
+        .setTitle(Staff.name.full)
+        .setURL(Staff.siteUrl)
+        .setAuthor(Staff.name.full)
+        .setThumbnail(Staff.image.large)
         .addFields(
-          {name : "Native name", value : data.data.Staff.name.native, inline: true},
-          { name : "Language", value : data.data.Staff.language, inline: true},
-          { name : "Description", value : data.data.Staff.description, inline : false},
+          {name : "Native name", value : Staff.name.native, inline: true},
+          { name : "Language", value : Staff.language, inline: true},
+          { name : "Description", value : Staff.description, inline : false},
           { name : "Characters (10 most popular)", value : characters, inline : false}
                 )
         .setFooter(`Brought to you by QT Bot and Anilist API in ${new Date() - start}ms`);
       msg.channel.send(embed);
     }
 
-    function handleError(error) {
-      console.error(error);
-    }
-
-    function getCharacters(data){
+    function getCharacters(Staff){
       var characters = "";
-      var edges = data.data.Staff.characters.edges;
+      var edges = Staff.characters.edges;
       for(i=0; i < edges.length; i++){
         characters = characters + edges[i].node.name.full + " (" + getAnimeCharacter(edges[i]) + ")" + "\n";
       }
