@@ -1,5 +1,5 @@
+const { MessageEmbed } = require("discord.js");
 const dateFormat = require ("dateformat");
-const { MessageEmbed, DiscordAPIError } = require("discord.js");
 const status = require("./functions/status");
 
 module.exports = {

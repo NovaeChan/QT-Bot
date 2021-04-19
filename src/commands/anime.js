@@ -1,8 +1,8 @@
 const { MessageEmbed } = require("discord.js");
 const replace = require("./functions/replaceMsg");
 const query = require("./queries/getAnimeQuery");
-const statusAnime = require("./functions/status");
-const api = require("../api.js");
+const processingRequest = require("./functions/processingRequest");
+const api = require("../api");
 
 
 module.exports = {
@@ -28,52 +28,15 @@ module.exports = {
       function handleData(data){
           const animeInfo = data.Media;
 
-          const status = statusAnime.statusAnime(animeInfo.status);
+          const status = processingRequest.getStatusAnime(animeInfo.status);
 
-          let studios = "";
-          if(animeInfo.studios.nodes.length > 0){
-            for(i = 0; i < animeInfo.studios.nodes.length; i++){
-              studios += animeInfo.studios.nodes[i].name;
-              if( i+1 !== animeInfo.studios.nodes.length && animeInfo.studios.nodes[i]){
-                studios += ", ";
-              }
-            }
-          }
+          const studios = processingRequest.getStudio(animeInfo.studios);
 
-          let directors = "";
-          if(animeInfo.staff.edges.length > 0){
-            for(i = 0; i < animeInfo.staff.edges.length; i++){
-              if(animeInfo.staff.edges[i].role === "Director" || animeInfo.staff.edges[i].role === "Chief Director"){
-                directors += " " + animeInfo.staff.nodes[i].name.full + ",";
-              }
-            }
-            if(directors.length > 0){
-              directors = directors.substring(1);
-              directors = directors.slice(0, -1);
-            }
-            else{
-              directors = "No directors found";
-            }
-          }
+          const directors = processingRequest.getDirectors(animeInfo.staff);
 
-          let synopsis = "";
-          if(animeInfo.description.length > 0){
-            synopsis = animeInfo.description;
-            let regex = '<\/?!?(li|ul|br|em|i)[^>]*>'
-            var re = new RegExp(regex, 'g');
-            synopsis = synopsis.replace(re, '');
+          const synopsis = processingRequest.getSynopsis(animeInfo.description);
 
-            if(animeInfo.description.length > 1020){
-              synopsis = synopsis.slice(0, 1019);
-              n = synopsis.lastIndexOf(".");
-              if(n > 0 && n < synopsis.length){
-                  synopsis = synopsis.substring(0, n) + '[...]';
-              }
-            }
-          }
-          else{
-            synopsis = "No synopsis found";
-          }
+          const genres = processingRequest.getGenres(animeInfo.genres);
 
           const embed = new MessageEmbed()
               .setColor('#0099ff')
@@ -92,16 +55,16 @@ module.exports = {
                     embed.addField('\u200B', '\u200B', true );
                   }
                   else{
-                    let dayStart = replace.formatDateAnime(animeInfo.startDate.day);
-                    let monthStart = replace.formatDateAnime(animeInfo.startDate.month);
-                    let yearStart = replace.formatDateAnime(animeInfo.startDate.year);
+                    const dayStart = replace.formatDateAnime(animeInfo.startDate.day);
+                    const monthStart = replace.formatDateAnime(animeInfo.startDate.month);
+                    const yearStart = replace.formatDateAnime(animeInfo.startDate.year);
                     if(status === "Airing"){
                       embed.addfield('Started', dayStart + "/" + monthStart + "/" + yearStart,true);
                     }
                     else{
-                      let dayEnd = replace.formatDateAnime(animeInfo.endDate.day);
-                      let monthEnd = replace.formatDateAnime(animeInfo.endDate.month);
-                      let yearEnd = replace.formatDateAnime(animeInfo.endDate.year);
+                      const dayEnd = replace.formatDateAnime(animeInfo.endDate.day);
+                      const monthEnd = replace.formatDateAnime(animeInfo.endDate.month);
+                      const yearEnd = replace.formatDateAnime(animeInfo.endDate.year);
                       embed.addField("Aired", dayStart + "/" + monthStart + "/" + yearStart + 
                                       " to " + dayEnd + "/" + monthEnd + "/" + yearEnd,true);
                     }
@@ -111,10 +74,10 @@ module.exports = {
                 { name : "Studios", value : studios, inline : true },
                 { name: '\u200B', value: '\u200B', inline : true },
                 { name : "Directors", value : directors, inline : true },
-                { name : "Genres", value : animeInfo.genres.join(", "), inline : false },
+                { name : "Genres", value : genres, inline : false },
                 { name : "Synopsis", value : synopsis, inline : false },
                   )
-              .setFooter(`Brought to you by QT Bot and Anilist API in ${new Date() - start}ms`);
+              .setFooter(`Brought to you by Anilist API in ${new Date() - start}ms`);
 
           msg.channel.send(embed);
       }

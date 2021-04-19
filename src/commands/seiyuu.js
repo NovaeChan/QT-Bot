@@ -34,7 +34,7 @@ module.exports = {
           { name : "Description", value : Staff.description, inline : false},
           { name : "Characters (10 most popular)", value : characters, inline : false}
                 )
-        .setFooter(`Brought to you by QT Bot and Anilist API in ${new Date() - start}ms`);
+        .setFooter(`Brought to you by Anilist API in ${new Date() - start}ms`);
       msg.channel.send(embed);
     }
 

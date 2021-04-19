@@ -1,5 +1,5 @@
-const replace = require('./functions/replaceMsg');
 const { MessageEmbed } = require("discord.js");
+const replace = require('./functions/replaceMsg');
 const query = require("./queries/getStudioQuery.js");
 const api = require("../api.js");
 
@@ -33,7 +33,7 @@ module.exports = {
                     { name : "Animes", value : getAnime(studioInfo.media.nodes, 1), inline: false},
                     { name : "Animes bis", value : getAnime(studioInfo.media.nodes, 2), inline : false}
                     )
-                .setFooter(`Brought to you by QT Bot and Anilist API in ${new Date() - start}ms`);
+                .setFooter(`Brought to you by Anilist API in ${new Date() - start}ms`);
 
 
             msg.channel.send(embed);

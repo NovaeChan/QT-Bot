@@ -9,12 +9,10 @@
   "author": "Novae",
   "license": "ISC",
   "dependencies": {
-    "anilist-node": "^1.7.0",
     "dateformat": "^4.5.1",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",
-    "graphql-request": "^3.4.0",
-    "jsdom": "^16.5.2"
+    "graphql-request": "^3.4.0"
   }
 }
