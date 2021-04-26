@@ -17,7 +17,7 @@ module.exports = {
         const response = await api(query, { search : manga } );
         if(response.error){
           console.error(response);
-          msg.channel.send("Something went wrong");
+          msg.channel.send("No manga found");
           return response;
         }
         handleData(response);

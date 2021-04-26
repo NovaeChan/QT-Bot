@@ -22,7 +22,7 @@ module.exports = {
       const response = await api(query, { search : anime } );
       if(response.error){
         console.error(response);
-        msg.channel.send("Something went wrong");
+        msg.channel.send("No anime found");
         return response;
       }
       handleData(response);
@@ -80,7 +80,7 @@ module.exports = {
                     const monthStart = replace.formatDateAnime(animeInfo[i].startDate.month);
                     const yearStart = replace.formatDateAnime(animeInfo[i].startDate.year);
                     if(status[i] === "Airing"){
-                      embed.addfield('Started', dayStart + "/" + monthStart + "/" + yearStart,true);
+                      embed.addField('Started', dayStart + "/" + monthStart + "/" + yearStart,true);
                     }
                     else{
                       const dayEnd = replace.formatDateAnime(animeInfo[i].endDate.day);
@@ -106,9 +106,7 @@ module.exports = {
           }
 
           paginationEmbed(msg, pages);
-    
-          //msg.channel.send(embed);
-          
+              
       }
   }
 }
