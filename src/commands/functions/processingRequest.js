@@ -48,7 +48,7 @@ const getStatusAnime = (status) => {
 const getSynopsis = (description) => {
     if(description.length > 0){
         synopsis = description;
-        const regex = '<\/?!?(li|ul|br|em|i)[^>]*>'
+        const regex = '<\/?!?(li|ul|br|em|i|b|Br)[^>]*>'
         let re = new RegExp(regex, 'g');
         synopsis = synopsis.replace(re, '');
         if(description.length > 1020){

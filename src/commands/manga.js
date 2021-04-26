@@ -4,6 +4,7 @@ const query = require("./queries/getMangaQuery");
 const statusAnime = require("./functions/status");
 const api = require("../api");
 const processingRequest = require("./functions/processingRequest");
+const paginationEmbed = require('discord.js-pagination');
 
 
 module.exports = {
@@ -22,55 +23,75 @@ module.exports = {
         handleData(response);
 
         function handleData(data){
-            const manga = data.Media;
+            const manga = data.Page.media;
 
-            const status = statusAnime.statusAnime(manga.status);
+            const status = [];
+            for(let i = 0; i < manga.length; i++){
+                status[i] = statusAnime.statusAnime(manga[i].status);
+            }
 
-            const genres = processingRequest.getGenres(manga.genres);
-                
-            const auteurs = processingRequest.getAuthor(manga.staff);
+            const genres = [];
+            for(let i = 0; i < manga.length; i++){
+                genres[i] = processingRequest.getGenres(manga[i].genres);
+            }
 
-            const synopsis = processingRequest.getSynopsis(manga.description);
+            const auteurs = [];
+            for(let i = 0; i < manga.length; i++){
+                auteurs[i] = processingRequest.getAuthor(manga[i].staff);
+            }
 
-            const embed = new MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle(`${manga.title.english || manga.title.romaji}`)
-                .setURL(`${manga.siteUrl}`)
-                .setAuthor(`${manga.title.romaji}`)
-                .setThumbnail(manga.coverImage.extraLarge || manga.coverImage.large || manga.coverImage.medium)
-                .addFields(
-                    { name : "Native" , value : manga.title.native, inline: true },
-                    { name : "Type" , value : manga.format, inline: true },
-                    { name : 'Rating', value: manga.averageScore / 10, inline : true },
-                    { name : "Volumes", value : manga.volumes || "N/A", inline: true},
-                    { name : "Chapters", value : manga.chapters || "N/A", inline: true},
-                    { name : "Status", value : status, inline : true}
-                );
-                if(status === "Not Yet Release"){
-                    embed.addField('\u200B', '\u200B', true );
+            const synopsis = [];
+            for(let i = 0; i < manga.length; i++){
+                synopsis[i] = processingRequest.getSynopsis(manga[i].description);
+            }
+
+            let pages = [];
+            for(let i = 0; i < 10; i++){
+                if(manga[i]){
+                    const embed = new MessageEmbed()
+                        .setColor('#0099ff')
+                        .setTitle(`${manga[i].title.english || manga[i].title.romaji}`)
+                        .setURL(`${manga[i].siteUrl}`)
+                        .setAuthor(`${manga[i].title.romaji}`)
+                        .setThumbnail(manga[i].coverImage.extraLarge || manga[i].coverImage.large || manga[i].coverImage.medium)
+                        .addFields(
+                            { name : "Native" , value : manga[i].title.native, inline: true },
+                            { name : "Type" , value : manga[i].format, inline: true },
+                            { name : 'Rating', value: manga[i].averageScore / 10, inline : true },
+                            { name : "Volumes", value : manga[i].volumes || "N/A", inline: true},
+                            { name : "Chapters", value : manga[i].chapters || "N/A", inline: true},
+                            { name : "Status", value : status[i], inline : true}
+                        );
+                        if(status[i] === "Not Yet Release"){
+                            embed.addField('\u200B', '\u200B', true );
+                        }
+                        else{
+                            const dayStart = replace.formatDateAnime(manga[i].startDate.day);
+                            const monthStart = replace.formatDateAnime(manga[i].startDate.month);
+                            const yearStart = replace.formatDateAnime(manga[i].startDate.year);
+                            if(status[i] === "Airing"){
+                                embed.addField('Started', dayStart + "/" + monthStart + "/" + yearStart,true);
+                            }
+                            else{
+                                const dayEnd = replace.formatDateAnime(manga[i].endDate.day);
+                                const monthEnd = replace.formatDateAnime(manga[i].endDate.month);
+                                const yearEnd = replace.formatDateAnime(manga[i].endDate.year);
+                                embed.addField("Aired", dayStart + "/" + monthStart + "/" + yearStart + 
+                                                " to " + dayEnd + "/" + monthEnd + "/" + yearEnd,true);
+                            }
+                        }
+                        embed.addFields(
+                            { name : "Authors" , value : auteurs[i], inline: true },
+                            { name : "Genres", value : genres[i], inline: false},
+                            { name : "Description", value : synopsis[i], inline : false},    
+                        );
+                    pages[i] = embed;
                 }
                 else{
-                    const dayStart = replace.formatDateAnime(manga.startDate.day);
-                    const monthStart = replace.formatDateAnime(manga.startDate.month);
-                    const yearStart = replace.formatDateAnime(manga.startDate.year);
-                    if(status === "Airing"){
-                        embed.addField('Started', dayStart + "/" + monthStart + "/" + yearStart,true);
-                    }
-                    else{
-                        const dayEnd = replace.formatDateAnime(manga.endDate.day);
-                        const monthEnd = replace.formatDateAnime(manga.endDate.month);
-                        const yearEnd = replace.formatDateAnime(manga.endDate.year);
-                        embed.addField("Aired", dayStart + "/" + monthStart + "/" + yearStart + 
-                                        " to " + dayEnd + "/" + monthEnd + "/" + yearEnd,true);
-                    }
+                    break;
                 }
-                embed.addFields(
-                    { name : "Authors" , value : auteurs, inline: true },
-                    { name : "Genres", value : genres, inline: false},
-                    { name : "Description", value : synopsis, inline : false},    
-                )
-                .setFooter(`Brought to you by Anilist API in ${new Date() - start}ms`);
-                msg.channel.send(embed);
             } 
+            paginationEmbed(msg, pages);
+        }
     }
 }

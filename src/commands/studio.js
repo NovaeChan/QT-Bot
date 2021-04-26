@@ -17,11 +17,26 @@ module.exports = {
           msg.channel.send("Something went wrong");
           return response;
         }
-        //console.log(response);
         handleData(response);
+
+        function getAnimeInfo(nodes){
+            let anime;
+            for(let i = 0; i < 1; i++){
+                anime =+ {
+                    "title" : `${nodes[i].title.romaji}`,
+                    "season" : `${nodes[i].season}`,
+                    "seasonYear" : `${nodes[i].seasonYear}`,
+                    "score" : `${nodes[i].averageScore}`
+                }
+            }
+            console.log(anime);
+            return JSON.stringify(anime);
+        }
 
         function handleData(data){
             var studioInfo = data.Studio;
+            let getAnime = getAnimeInfo(studioInfo.media.nodes);
+            console.log(getAnime);
             const embed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(studioInfo.name)
@@ -30,14 +45,34 @@ module.exports = {
                 //.setThumbnail(data.data.Staff.image.large)
                 .addFields(
                     { name : "Studio type", value : studioInfo.isAnimationStudio ? "Animation Studio" : " ??? ", inline: true},
-                    { name : "Animes", value : getAnime(studioInfo.media.nodes, 1), inline: false},
-                    { name : "Animes bis", value : getAnime(studioInfo.media.nodes, 2), inline : false}
+                    { name : "Animes", value : "a"/*getAnime(studioInfo.media.nodes, 1)*/, inline: false},
+                    { name : "Animes bis", value : "a"/*getAnime(studioInfo.media.nodes, 2)*/, inline : false}
                     )
                 .setFooter(`Brought to you by Anilist API in ${new Date() - start}ms`);
 
 
             msg.channel.send(embed);
         }
+
+
+        //TODO: Je dois vérfier l'année de diffusion
+        //Si pas encore diffusé alors => TBA et je n'affiche pas la note
+        //Je dois grouper en fonction de l'année de diffusion
+        //Si la taille dépasse la taille max autorisée alors je passe à la deuxième page
+
+
+        /*
+        Si nodes[i] existe alors : 
+            si la taille de la liste d'animes < 1024 alors : 
+                on regroupe les animes par groupe d'années 
+        */
+        function sortAnime(nodes, index, page){
+            const animeInfo = getAnimeInfo(nodes);
+            let animes = "";
+            //if()
+        }
+
+
 
         //Temp function
         function getAnime(nodes, index){

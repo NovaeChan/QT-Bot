@@ -32,7 +32,7 @@ module.exports = {
           {name : "Native name", value : Staff.name.native, inline: true},
           { name : "Language", value : Staff.language, inline: true},
           { name : "Description", value : Staff.description, inline : false},
-          { name : "Characters (10 most popular)", value : characters, inline : false}
+          { name : "10 most popular characters", value : characters, inline : false}
                 )
         .setFooter(`Brought to you by Anilist API in ${new Date() - start}ms`);
       msg.channel.send(embed);
