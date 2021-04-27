@@ -5,7 +5,7 @@ query ($search: String, $page: Int){
         name
         siteUrl
         isAnimationStudio
-        media(sort:START_DATE_DESC,page: $page, perPage:25){
+        media(sort:START_DATE_DESC,page: $page, perPage:20){
             nodes{
             title {
                 romaji
