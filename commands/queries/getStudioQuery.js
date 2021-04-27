@@ -1,16 +1,19 @@
 module.exports = `
-query ($search: String){
+query ($search: String, $page: Int){
     Studio(search:$search) {
         id
         name
         siteUrl
         isAnimationStudio
-        media(sort:START_DATE_DESC,page: 1, perPage:25){
+        media(sort:START_DATE_DESC,page: $page, perPage:25){
             nodes{
             title {
                 romaji
                 english
                 native
+            }
+            startDate {
+                year
             }
             countryOfOrigin
             type
