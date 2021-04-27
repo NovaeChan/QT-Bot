@@ -19,24 +19,9 @@ module.exports = {
         }
         handleData(response);
 
-        function getAnimeInfo(nodes){
-            let anime;
-            for(let i = 0; i < 1; i++){
-                anime =+ {
-                    "title" : `${nodes[i].title.romaji}`,
-                    "season" : `${nodes[i].season}`,
-                    "seasonYear" : `${nodes[i].seasonYear}`,
-                    "score" : `${nodes[i].averageScore}`
-                }
-            }
-            console.log(anime);
-            return JSON.stringify(anime);
-        }
-
         function handleData(data){
             var studioInfo = data.Studio;
-            let getAnime = getAnimeInfo(studioInfo.media.nodes);
-            console.log(getAnime);
+            console.log(studioInfo);
             const embed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(studioInfo.name)
@@ -66,10 +51,9 @@ module.exports = {
             si la taille de la liste d'animes < 1024 alors : 
                 on regroupe les animes par groupe d'années 
         */
-        function sortAnime(nodes, index, page){
-            const animeInfo = getAnimeInfo(nodes);
-            let animes = "";
-            //if()
+        function sortAnime(nodes, start){
+            let animeInfo = [];
+
         }
 
 
