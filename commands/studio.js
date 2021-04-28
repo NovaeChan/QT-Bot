@@ -9,36 +9,48 @@ module.exports = {
     name : 'studio', 
     description : 'Get informations on a studio',
     async execute(msg, args){
-        msg.reply("This command is still in beta");
+        msg.reply("This command is still in beta. It might take some times to process. I am trying to find a way to get the results faster like creating my own database.");
+        
         let studio = replace.replaceVirgule(args);
         
-        const response = [];
-        for(let i = 0; i < 20; i++){
-            response[i] = await api(query, {search : studio, page: i+1});
-            if(response[i].error){
-                console.error(response);
-                msg.channel.send("Something went wrong");
-                return reponse;
+        let start = new Date();
+        async function getDataStudio(studio){
+            const response = [];
+            for(let i = 0; i < 99; i++){
+                response[i] = await api(query, {search : studio, page: i+1});
+                if(response[i].error){
+                    console.error(response);
+                    msg.channel.send("Something went wrong");
+                    return reponse;
+                }
+                if(response[i].Studio.media.nodes.length < 1){
+                    break;
+                }
+                while(new Date() - start < 1000){
+                    //Do nothing. I can't really get setTimeout to work out
+                }
+                console.log(i);
             }
-            if(response[i].Studio.media.nodes.length < 1){
-                break;
-            }
+            return response;
         }
-       
-        handleData(response);
+        const data = await getDataStudio(studio);
+
+        handleData(data);
 
         function handleData(data){
             let pages = [];
             for(let i = 0; i < data.length; i++){
                 if(data[i].Studio.media.nodes.length > 0){
-                    var studioInfo = data[i].Studio;
+                    const studioInfo = data[i].Studio;
 
-                    let animes = sortAnime(studioInfo.media.nodes, 0);
+                    const animes = sortAnime(studioInfo.media.nodes, 0);
                     const embed = new MessageEmbed()
                     .setColor('#0099ff')
-                    .setURL(studioInfo.siteUrl)
-                    .setAuthor(studioInfo.name)
-                    .addFields(
+                    if(i===0){
+                        embed.setURL(studioInfo.siteUrl)
+                        embed.setAuthor(studioInfo.name)
+                    }
+                    embed.addFields(
                         { name : "Studio type", value : studioInfo.isAnimationStudio ? "Animation Studio" : " ??? ", inline: true},
                         );
                         for(let j = 0; j < animes.length; j++){
@@ -105,5 +117,4 @@ module.exports = {
         }
 
     }
-
 }

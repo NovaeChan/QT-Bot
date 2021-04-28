@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 
-
 module.exports = {
     name : 'gif', 
     description : 'Return a random gif from Tenor',

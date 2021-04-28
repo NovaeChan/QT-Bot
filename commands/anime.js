@@ -6,7 +6,6 @@ const api = require("../api");
 const paginationEmbed = require('discord.js-pagination');
 
 
-
 module.exports = {
     name : 'anime', 
     description : 'Get informations on an anime',

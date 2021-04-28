@@ -1,8 +1,6 @@
 const fetch = require('node-fetch');
 const { MessageEmbed, RichEmbed } = require("discord.js");
 
-
-
 module.exports = {
     name : 'spank', 
     description : 'Spanks someone',
