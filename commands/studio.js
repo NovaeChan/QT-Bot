@@ -29,7 +29,6 @@ module.exports = {
                 while(new Date() - start < 1000){
                     //Do nothing. I can't really get setTimeout to work out
                 }
-                console.log(i);
             }
             return response;
         }
