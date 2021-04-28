@@ -92,9 +92,59 @@ const getGenres = (genre) => {
     }
 }
 
+const sortAnime = (nodes, start) => {
+    let animes = [];
+
+    animes[0] = nodes[start].startDate.year;
+    let year = animes[0];
+    let index = 1;
+
+    for(let i = 0; i < nodes.length; i++){
+        if(nodes[i].startDate.year === year){
+            if(animes[index]){
+                animes[index] += nodes[i].title.romaji;
+            }
+            else{
+                animes[index] = nodes[i].title.romaji;
+            }
+            if(nodes[i].status !== "NOT_YET_RELEASED"){
+                if(nodes[i].season){
+                    animes[index] += " (" + nodes[i].season;
+                }
+                if(nodes[i].averageScore){
+                    animes[index] += ") - " + "score : " + nodes[i].averageScore / 10 + "/10";
+                }
+            }
+            animes[index] += " \n ";
+        }
+        else{
+            index++;
+            animes[index] = nodes[i].startDate.year;
+            year = animes[index];
+            index++;
+            if(nodes[i].startDate.year === year){
+                if(animes[index]){
+                    animes[index] += nodes[i].title.romaji;
+                }
+                else{
+                    animes[index] = nodes[i].title.romaji;
+                }
+                if(nodes[i].status !== "NOT_YET_RELEASED"){
+                    animes[index] += " (" + nodes[i].season + " " + nodes[i].startDate.year + ") - "
+                                          + "score : " + nodes[i].averageScore / 10 + "/10";
+                }
+                animes[index] += " \n ";
+            }
+        }
+    }
+    return animes;
+}
+
+
 exports.getStudio = getStudio;
 exports.getDirectors = getDirectors;
 exports.getStatusAnime = getStatusAnime;
 exports.getSynopsis = getSynopsis;
 exports.getAuthor = getAuthor;
 exports.getGenres = getGenres;
+exports.sortAnime = sortAnime;

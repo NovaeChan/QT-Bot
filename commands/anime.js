@@ -10,7 +10,6 @@ module.exports = {
     name : 'anime', 
     description : 'Get informations on an anime',
     async execute(msg, args){
-      let start = new Date();
       const anime = replace.replaceVirgule(args);
       
       if(anime.toUpperCase() === "SPACE DANDY"){
@@ -103,9 +102,7 @@ module.exports = {
               break;
             }
           }
-
           paginationEmbed(msg, pages);
-              
       }
   }
 }

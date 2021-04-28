@@ -3,6 +3,7 @@ const replace = require('./functions/replaceMsg');
 const query = require("./queries/getStudioQuery.js");
 const api = require("../api.js");
 const paginationEmbed = require('discord.js-pagination');
+const processingRequest = require('./functions/processingRequest');
 
 
 module.exports = {
@@ -27,7 +28,7 @@ module.exports = {
                     break;
                 }
                 while(new Date() - start < 1000){
-                    //Do nothing. I can't really get setTimeout to work out
+                    //Do nothing. I can't really get setTimeout to work out :/
                 }
             }
             return response;
@@ -42,16 +43,18 @@ module.exports = {
                 if(data[i].Studio.media.nodes.length > 0){
                     const studioInfo = data[i].Studio;
 
-                    const animes = sortAnime(studioInfo.media.nodes, 0);
+                    const animes = processingRequest.sortAnime(studioInfo.media.nodes, 0);
                     const embed = new MessageEmbed()
                     .setColor('#0099ff')
+                    
+                        .setURL(studioInfo.siteUrl)
+                        .setAuthor(studioInfo.name)
+                    
                     if(i===0){
-                        embed.setURL(studioInfo.siteUrl)
-                        embed.setAuthor(studioInfo.name)
-                    }
                     embed.addFields(
                         { name : "Studio type", value : studioInfo.isAnimationStudio ? "Animation Studio" : " ??? ", inline: true},
                         );
+                    }
                         for(let j = 0; j < animes.length; j++){
                             if(!animes[j]){
                                 embed.addField("TBA", animes[j+1], false);
@@ -71,7 +74,7 @@ module.exports = {
 
         }
 
-        function sortAnime(nodes, start){
+        /*function sortAnime(nodes, start){
             let animes = [];
 
             animes[0] = nodes[start].startDate.year;
@@ -113,7 +116,7 @@ module.exports = {
                 }
             }
             return animes;
-        }
+        }*/
 
     }
 }

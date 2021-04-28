@@ -11,7 +11,6 @@ module.exports = {
     name : 'manga', 
     description : 'Get informations on a manga',
     async execute(msg, args){
-        let start = new Date();
         let manga = replace.replaceVirgule(args);
 
         const response = await api(query, { search : manga } );
